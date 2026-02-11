@@ -1,0 +1,7 @@
+dependencies:
+  - mathjax
+  - numpydoc
+  - sphinx
+  - sphinx_rtd_theme
+  - hypothesis
+  - pytest

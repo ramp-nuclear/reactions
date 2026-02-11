@@ -1,0 +1,114 @@
+"""Submodule for typus enums.
+
+"""
+from enum import Enum
+
+
+class Typus(str, Enum):
+    """Typus enum for reaction types.
+
+    """
+
+    NElastic = '(n,n)'
+    NInelastic = "(n,n')"
+    NAnything = "(n,anything)"
+    N2ND = '(n,2nd)'
+    N2N = '(n,2n)'
+    N3N = '(n,3n)'
+    NFission = '(n,f)'    
+    NNAlpha = r'(n,n\alpha)'
+    NN3Alpha = r'(n,n3\alpha)'
+    N2NAlpha = r'(n,2n\alpha)'
+    N3NAlpha = r'(n,3n\alpha)'
+    NNP = '(n,np)'
+    NN2Alpha = r'(n,n2\alpha)'
+    N2N2Alpha = r'(n,2n2\alpha)'
+    NND = '(n,nd)'
+    NNT = '(n,nt)'
+    NNHe3 = '(n,nHe3)'
+    NND2Alpha = r'(n,nd2\alpha)'
+    NNT2Alpha = r'(n,nt2\alpha)'
+    N4N = '(n,4n)'
+    N2NP = '(n,2np)'
+    N3NP = '(n,3np)'
+    NN2P = '(n,n2p)'
+    NNPAlpha = r'(n,np\alpha)'
+    NGamma = r'(n,\gamma)'    
+    NP = '(n,p)'
+    ND = '(n,d)'
+    NT = '(n,t)'
+    NHe3 = '(n,He3)'
+    NAlpha = r'(n,\alpha)'
+    N2Alpha = r'(n,2\alpha)'
+    N3Alpha = r'(n,3\alpha)'
+    N2P = '(n,2p)'
+    NPAlpha = r'(n,p\alpha)'
+    NT2Alpha = r'(n,t2\alpha)'
+    ND2Alpha = r'(n,d2\alpha)'
+    NPD = '(n,pd)'
+    NPT = '(n,pt)'
+    NDAlpha = r'(n,d\alpha)'
+    N5N = '(n,5n)'
+    N6N = '(n,6n)'
+    N2NT = '(n,2nt)'
+    N4NP = '(n,4np)'
+    N3ND = '(n,3nd)'
+    NNDAlpha = r'(n,nd\alpha)'
+    N2NPAlpha = r'(n,2np\alpha)'
+    N7N = '(n,7n)'
+    N8N = '(n,8n)'
+    N5NP = '(n,5np)'
+    N6NP = '(n,6np)'
+    N7NP = '(n,7np)'
+    N4NAlpha = r'(n,4n\alpha)'
+    N5NAlpha = r'(n,5n\alpha)'
+    N6NAlpha = r'(n,6n\alpha)'
+    N7NAlpha = r'(n,7n\alpha)'
+    N4ND = '(n,4nd)'
+    N5ND = '(n,5nd)'
+    N6ND = '(n,6nd)'
+    N3NT = '(n,3nt)'
+    N4NT = '(n,4nt)'
+    N5NT = '(n,5nt)'
+    N6NT = '(n,6nt)'
+    N2NHe3 = '(n,2nHe3)'
+    N3NHe3 = '(n,3nHe3)'
+    N4NHe3 = '(n,4nHe3)'
+    N3N2P = '(n,3n2p)'
+    N3N2Alpha = r'(n,3n2\alpha)'
+    N3NPAlpha = r'(n,3np\alpha)'
+    NDT = '(n,dt)'
+    NNPD = '(n,npd)'
+    NNPT = '(n,npt)'
+    NNDT = '(n,ndt)'
+    NNPHe3 = '(n,npHe3)'
+    NNDHe3 = '(n,ndHe3)'
+    NNTHe3 = '(n,ntHe3)'
+    NNTAlpha = r'(n,nt\alpha)'
+    N2N2P = '(n,2n2p)'
+    NPHe3 = '(n,pHe3)'
+    NDHe3 = '(n,dHe3)'
+    NHe3Alpha = r'(n,He3\alpha)'
+    N4N2P = '(n,4n2p)'
+    N4N2Alpha = r'(n,4n2\alpha)'
+    N4NPAlpha = r'(n,4np\alpha)'
+    N3P = '(n,3p)'
+    NN3P = '(n,n3p)'
+    N3N2PAlpha = r'(n,3n2p\alpha)'
+    N5N2P = '(n,5n2p)'
+
+    NHeating = '(n,heat)'
+        
+
+
+class ProdTypus(str, Enum):
+    """Typus enum for production reaction types
+
+    """
+
+    NNTot = '(n, n_tot)'
+    NPtot = '(n,p_tot)'
+    NDtot = '(n,d_tot)'
+    NTtot = '(n,t_tot)'
+    NHe3tot = '(n,He3_tot)'
+    NAlphatot = r'(n,\alpha_tot)'
