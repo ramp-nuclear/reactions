@@ -1,0 +1,44 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Python package
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "dev" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Single requirements file
+      run: |
+        cp requirements.yml allreq.yml
+        tail -n +2 tests_requirements.yml >> allreq.yml
+    - name: setup-micromamba
+      uses: mamba-org/setup-micromamba@v2.0.6
+      with:
+        environment-file: allreq.yml
+        environment-name: reactions-${{ github.run_id }}-${{ github.run_attempt }}
+        post-cleanup: 'all'
+    - name: Install dependencies
+      run: |
+        pip install --no-build-isolation -r packages.txt
+      shell: micromamba-shell {0}
+    - name: Install this package
+      run: |
+        pip install --no-build-isolation .
+      shell: micromamba-shell {0}
+    - name: Doctest
+      run: |
+        pytest -v --doctest-modules reaction
+      shell: micromamba-shell {0}
+    - name: Test in test directory
+      run: |
+        cd tests
+        pytest -v
+      shell: micromamba-shell {0}
