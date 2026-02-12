@@ -27,7 +27,7 @@ jobs:
         post-cleanup: 'all'
     - name: Install dependencies
       run: |
-        pip install --no-build-isolation -r packages.txt
+        pip install -r packages.txt
       shell: micromamba-shell {0}
     - name: Install this package
       run: |
