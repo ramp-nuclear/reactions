@@ -2,4 +2,5 @@ dependencies:
   - multipledispatch
   - numpy
   - pip
+  - python
 
