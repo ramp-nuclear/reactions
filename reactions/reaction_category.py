@@ -6,9 +6,16 @@ These define ideas like "Fission" or "Helium production".
 import re
 from collections import Counter
 from dataclasses import dataclass
+from typing import Mapping, Type, TypeVar, Any
+try:
+    from typing import Self
+except ImportError:
+    Self = TypeVar("Self")
 
 from isotopes import Isotope, ZAID
-
+from ramp_core.serializable import Serializable
+from .particle import Alpha, Deutron, He3, Neutron, Particle, Photon, Proton, Triton
+from .typus import ProdTypus, Typus
 
 __all__ = [
     "ProductionReactionCategory",
@@ -106,9 +113,6 @@ __all__ = [
     "NHeating",
 ]
 
-from .particle import Alpha, Deutron, He3, Neutron, Particle, Photon, Proton, Triton
-from .typus import ProdTypus, Typus
-
 
 class FissionTargetError(ValueError):
     """An error that is raised when trying to figure out what the resulting
@@ -148,9 +152,13 @@ class ReactionCategory:
 
     """
 
-    def __init__(self, typus: str, releases, target_state: int = 0):
+    ser_identifier = "ReactionCategory"
+
+    def __init__(self, typus: str, 
+                 releases: Mapping[Particle, int], 
+                 target_state: int = 0):
         self.typus = typus
-        self.releases = releases
+        self.releases = dict(releases)
         self.target_state = target_state
 
     def __eq__(self, other: "ReactionCategory"):
@@ -215,6 +223,17 @@ class ReactionCategory:
 
     __str__ = __repr__
 
+    def serialize(self) -> tuple[str, dict]:
+        return (self.ser_identifier, 
+                (self.__dict__ | {"releases": tuple(
+                    (p.serialize()[1], v) for p, v in self.releases.items())}))
+
+    @classmethod
+    def deserialize(cls: Type[Self], d: dict[str, Any], *, 
+                    supported: dict[str, Type[Serializable]]) -> Self:
+        d["releases"] = {Particle.deserialize(p, supported=supported): v for p, v in d["releases"]}
+        return cls(**d)
+
 
 N2ND = ReactionCategory(Typus.N2ND, Counter([Neutron, Neutron, Deutron]))
 N2N = ReactionCategory(Typus.N2N, Counter([Neutron, Neutron]))
@@ -267,7 +286,8 @@ N7NP = ReactionCategory(Typus.N7NP, Counter([Neutron, Neutron, Neutron, Neutron,
 N4NAlpha = ReactionCategory(Typus.N4NAlpha, Counter([Neutron, Neutron, Neutron, Neutron, Alpha]))
 N5NAlpha = ReactionCategory(Typus.N5NAlpha, Counter([Neutron, Neutron, Neutron, Neutron, Neutron, Alpha]))
 N6NAlpha = ReactionCategory(Typus.N6NAlpha, Counter([Neutron, Neutron, Neutron, Neutron, Neutron, Neutron, Alpha]))
-N7NAlpha = ReactionCategory(Typus.N7NAlpha, Counter([Neutron, Neutron, Neutron, Neutron, Neutron, Neutron, Neutron, Alpha]))
+N7NAlpha = ReactionCategory(Typus.N7NAlpha, 
+                            Counter([Neutron, Neutron, Neutron, Neutron, Neutron, Neutron, Neutron, Alpha]))
 N4ND = ReactionCategory(Typus.N4ND, Counter([Neutron, Neutron, Neutron, Neutron, Deutron]))
 N5ND = ReactionCategory(Typus.N5ND, Counter([Neutron, Neutron, Neutron, Neutron, Neutron, Deutron]))
 N6ND = ReactionCategory(Typus.N6ND, Counter([Neutron, Neutron, Neutron, Neutron, Neutron, Neutron, Deutron]))

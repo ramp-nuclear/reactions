@@ -10,4 +10,7 @@ from .spectrum import *
 from .typus import Typus
 from .reaction_rate import ReactionRate
 
+jsonable = [ReactionCategory, Reaction, ProtoReaction, ProductionReaction, 
+            ReactionRate, Particle]
+
 __ver__ = 0.1

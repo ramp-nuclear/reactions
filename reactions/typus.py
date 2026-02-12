@@ -100,7 +100,6 @@ class Typus(str, Enum):
     NHeating = '(n,heat)'
         
 
-
 class ProdTypus(str, Enum):
     """Typus enum for production reaction types
 

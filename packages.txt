@@ -1,1 +1,2 @@
 git+ssh://git@github.com/ramp-nuclear/isotopes.git@main#egg=isotopes
+git+ssh://git@github.com/ramp-nuclear/ramp-core.git@main#egg=ramp_core
