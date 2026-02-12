@@ -25,8 +25,9 @@ jobs:
         environment-file: allreq.yml
         environment-name: reactions-${{ github.run_id }}-${{ github.run_attempt }}
         post-cleanup: 'all'
-    - name: Install dependencies
+    - name: Install dependencies # Not sure why but double install works
       run: |
+        pip install --no-build-isolation -r packages.txt
         pip install --no-build-isolation -r packages.txt
       shell: micromamba-shell {0}
     - name: Install this package
