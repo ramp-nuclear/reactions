@@ -61,7 +61,7 @@ class ReactionType(Serializable, Hashable, Protocol):
         raise NotImplementedError
 
     @property
-    def branching(self) -> Dict[ZAID, float]: 
+    def branching(self) -> dict[ZAID, float]: 
         """A map of which nuclei can be emitted by this reaction, and their branching ratios.
 
         For backwards compatibility, consumers of this type should assume that 
@@ -476,6 +476,9 @@ class ProductionReaction:
                 if isinstance(other, type(self))
                 else NotImplemented
                 )
+
+    def __hash__(self):
+        return hash((self.parent, self.target, self.typus))
 
     def serialize(self) -> tuple[str, dict[str, Any]]:
         return self.ser_identifier, dict(parent=self.parent, 
