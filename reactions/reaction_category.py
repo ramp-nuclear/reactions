@@ -6,14 +6,16 @@ These define ideas like "Fission" or "Helium production".
 import re
 from collections import Counter
 from dataclasses import dataclass
-from typing import Mapping, Type, TypeVar, Any
+from typing import Any, Mapping, Type, TypeVar
+
 try:
     from typing import Self
 except ImportError:
     Self = TypeVar("Self")
 
-from isotopes import Isotope, ZAID
+from isotopes import ZAID, Isotope
 from ramp_core.serializable import Serializable
+
 from .particle import Alpha, Deutron, He3, Neutron, Particle, Photon, Proton, Triton
 from .typus import ProdTypus, Typus
 

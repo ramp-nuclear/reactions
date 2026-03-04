@@ -1,7 +1,8 @@
 """Module for defining common ways to report reaction rates.
 
 """
-from typing import Generator, Type, Any, TypeVar
+from typing import Any, Generator, Type, TypeVar
+
 try:
     from typing import Self
 except ImportError:

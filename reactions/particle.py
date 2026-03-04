@@ -3,11 +3,11 @@
 """
 from enum import Enum
 
-
 __all__ = ['Particle', 'Photon', 'Proton', 'Neutron', 'Deutron', 'Triton',
            'He3', 'Alpha', 'Electron', 'Positron']
 
 from typing import Any, Type, TypeVar
+
 try:
     from typing import Self
 except ImportError:

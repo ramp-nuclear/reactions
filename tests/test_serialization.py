@@ -4,12 +4,17 @@ from collections import Counter
 import hypothesis.strategies as st
 from hypothesis import given, settings
 from isotopes import ZAID
-from ramp_core import RampJSONEncoder, RampJSONDecoder
+from ramp_core import RampJSONDecoder, RampJSONEncoder
 
 from reactions import (
-        jsonable, ProtoReaction, Reaction, ReactionCategory, Particle, 
-        ProductionReaction, ReactionRate,
-        )
+    Particle,
+    ProductionReaction,
+    ProtoReaction,
+    Reaction,
+    ReactionCategory,
+    ReactionRate,
+    jsonable,
+)
 
 zaids = st.tuples(st.integers(min_value=0, max_value=100),
                   st.integers(min_value=0, max_value=100),

@@ -1,5 +1,5 @@
 import hypothesis.strategies as st
-from hypothesis import given, settings, HealthCheck
+from hypothesis import HealthCheck, given, settings
 from isotopes import Isotope
 
 from reactions import ProtoReaction

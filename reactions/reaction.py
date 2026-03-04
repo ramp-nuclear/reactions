@@ -2,7 +2,9 @@
 This will include the list of known reactions.
 
 """
-from typing import Sequence, Generator, Protocol, Hashable, Iterable, Any, TypeVar, Type
+
+from typing import Any, Generator, Hashable, Iterable, Protocol, Sequence, Type, TypeVar
+
 try:
     from typing import Self
 except ImportError:
@@ -10,11 +12,11 @@ except ImportError:
 
 from isotopes import ZAID, Isotope
 from ramp_core.serializable import Serializable, deserialize_default
-from .spectrum import Spectrum
-from .reaction_category import *
 
-__all__ = ['ReactionType', 'ConcreteReaction', 'Reaction', 'ProtoReaction',
-           'ProductionReaction']
+from .reaction_category import ProductionReactionCategory, ReactionCategory
+from .spectrum import Spectrum
+
+__all__ = ["ReactionType", "ConcreteReaction", "Reaction", "ProtoReaction", "ProductionReaction"]
 
 eV = float
 
@@ -26,46 +28,36 @@ class ReactionType(Serializable, Hashable, Protocol):
     """
 
     @property
-    def parent(self) -> ZAID: 
-        """The parent nucleus identifier that transmutes in this reaction
-
-        """
+    def parent(self) -> ZAID:
+        """The parent nucleus identifier that transmutes in this reaction"""
         raise NotImplementedError
 
     @property
-    def typus(self) -> str: 
-        """The type of the reaction, usually an instance of :class:`reactions.typus.Typus`
-
-        """
+    def typus(self) -> str:
+        """The type of the reaction, usually an instance of :class:`reactions.typus.Typus`"""
         raise NotImplementedError
 
     @property
-    def nu(self) -> float: 
-        """The mean number of neutrons emitted in this reaction.
-
-        """
+    def nu(self) -> float:
+        """The mean number of neutrons emitted in this reaction."""
         raise NotImplementedError
 
     @property
-    def energy(self) -> eV: 
-        """The energy emitted by this reaction, in electron volts.
-
-        """
+    def energy(self) -> eV:
+        """The energy emitted by this reaction, in electron volts."""
         raise NotImplementedError
 
     @property
-    def energy_err(self) -> eV: 
-        """The uncertainty in the energy emission, in electron volts.
-
-        """
+    def energy_err(self) -> eV:
+        """The uncertainty in the energy emission, in electron volts."""
         raise NotImplementedError
 
     @property
-    def branching(self) -> dict[ZAID, float]: 
+    def branching(self) -> dict[ZAID, float]:
         """A map of which nuclei can be emitted by this reaction, and their branching ratios.
 
-        For backwards compatibility, consumers of this type should assume that 
-        an empty dictionary does not mean no targets exist but rather 
+        For backwards compatibility, consumers of this type should assume that
+        an empty dictionary does not mean no targets exist but rather
         that there is only one branch.
 
         We deprecate this behavior, and in the future we want to return a dictionary of length 1 in those cases.
@@ -79,25 +71,20 @@ class ReactionType(Serializable, Hashable, Protocol):
         raise NotImplementedError
 
     def branches(self) -> Iterable[tuple["ConcreteReaction", float]]:
-        """A function that returns all Reaction branches from this reaction.
-
-        """
+        """A function that returns all Reaction branches from this reaction."""
         raise NotImplementedError
 
-    def __str__(self) -> str: return self.typus
+    def __str__(self) -> str:
+        return self.typus
 
 
 # noinspection PyMissingOrEmptyDocstring
 class ConcreteReaction(ReactionType, Protocol):
-    """A ReactionType that has one specific target nuclide.
-
-    """
+    """A ReactionType that has one specific target nuclide."""
 
     @property
-    def target(self) -> ZAID: 
-        """The target nucleus created by this reaction from the parent.
-
-        """
+    def target(self) -> ZAID:
+        """The target nucleus created by this reaction from the parent."""
         raise NotImplementedError
 
 
@@ -113,12 +100,18 @@ class ProtoReaction:
     ser_identifier = "ProtoReaction"
     _members_ = {}
 
-    def __new__(cls, parent: ZAID, typus: str = '', *,
-                energy: eV = 0., energy_err: eV = 0.,
-                nu: float = 0.,
-                branching: dict[ZAID, float] = None,
-                spectra: Sequence[Spectrum] = ()) -> "ProtoReaction":
-        """Create a new proto-reaction object. 
+    def __new__(
+        cls,
+        parent: ZAID,
+        typus: str = "",
+        *,
+        energy: eV = 0.0,
+        energy_err: eV = 0.0,
+        nu: float = 0.0,
+        branching: dict[ZAID, float] = None,
+        spectra: Sequence[Spectrum] = (),
+    ) -> "ProtoReaction":
+        """Create a new proto-reaction object.
         This is used to implement the Singleton pattern, since a reaction can be used tens of thousands of
         times and we can't afford to have copies.
 
@@ -158,14 +151,25 @@ class ProtoReaction:
             return obj
 
     def __getnewargs_ex__(self):
-        return (self._parent, self._typus), dict(energy=self._energy, energy_err=self._energy_err, nu=self._nu,
-                                                 branching=self._branching, spectra=self._spectra)
+        return (self._parent, self._typus), dict(
+            energy=self._energy,
+            energy_err=self._energy_err,
+            nu=self._nu,
+            branching=self._branching,
+            spectra=self._spectra,
+        )
 
-    def __init__(self, parent: ZAID, typus: str = '', *,
-                 branching: dict[ZAID, float],
-                 energy: eV = 0., energy_err: eV = 0.,
-                 nu: float = 0.,
-                 spectra: Sequence[Spectrum] = ()):
+    def __init__(
+        self,
+        parent: ZAID,
+        typus: str = "",
+        *,
+        branching: dict[ZAID, float],
+        energy: eV = 0.0,
+        energy_err: eV = 0.0,
+        nu: float = 0.0,
+        spectra: Sequence[Spectrum] = (),
+    ):
         self._parent = parent
         self._typus = typus
         self._energy = energy
@@ -177,11 +181,17 @@ class ProtoReaction:
         self._nu = nu
 
     @classmethod
-    def from_reaction(cls, parent: ZAID, reaction: "ReactionCategory", *,
-                      branching: dict[ZAID, float] = None,
-                      spectra: Sequence[Spectrum] = (),
-                      nu: float = 0.,
-                      energy: eV = 0., energy_err: eV = 0.) -> "ProtoReaction":
+    def from_reaction(
+        cls,
+        parent: ZAID,
+        reaction: ReactionCategory,
+        *,
+        branching: dict[ZAID, float] = None,
+        spectra: Sequence[Spectrum] = (),
+        nu: float = 0.0,
+        energy: eV = 0.0,
+        energy_err: eV = 0.0,
+    ) -> "ProtoReaction":
         """Make a proto-reaction from a reaction category.
 
         Parameters
@@ -195,9 +205,15 @@ class ProtoReaction:
         energy_err - Error in energy release of this specific reaction
 
         """
-        return cls(parent=parent, typus=str(reaction),
-                   branching=branching or {}, nu=nu, energy=energy,
-                   energy_err=energy_err, spectra=spectra)
+        return cls(
+            parent=parent,
+            typus=str(reaction),
+            branching=branching or {},
+            nu=nu,
+            energy=energy,
+            energy_err=energy_err,
+            spectra=spectra,
+        )
 
     @property
     def parent(self) -> ZAID:
@@ -228,48 +244,58 @@ class ProtoReaction:
         return self._spectra
 
     def branches(self) -> Generator[tuple["Reaction", float], None, None]:
-        """Generator for the different branches this reaction has.
-        """
+        """Generator for the different branches this reaction has."""
         for target, branching in self.branching.items():
             yield Reaction(self, target), branching
 
     def __hash__(self):
-        return hash((
-            self._parent, self._typus, self._energy, self._energy_err, self._nu,
-            frozenset(self._branching.items() if self._branching else ()), self._spectra))
+        return hash(
+            (
+                self._parent,
+                self._typus,
+                self._energy,
+                self._energy_err,
+                self._nu,
+                frozenset(self._branching.items() if self._branching else ()),
+                self._spectra,
+            )
+        )
 
     def __str__(self) -> str:
-        return f'{self.parent}{self.typus}'
+        return f"{self.parent}{self.typus}"
 
     def __repr__(self) -> str:
-        return (f'{str(self)}: {self._energy=}, {self._energy_err=}, {self._nu=},'
-                f'{set(self._branching.items() if self._branching else ())}, {self._spectra=}')
+        return (
+            f"{str(self)}: {self._energy=}, {self._energy_err=}, {self._nu=},"
+            f"{set(self._branching.items() if self._branching else ())}, {self._spectra=}"
+        )
 
     def __eq__(self, other: "ProtoReaction"):
-        return (self.__getnewargs_ex__() == other.__getnewargs_ex__()
-                if isinstance(other, ProtoReaction)
-                else NotImplemented)
+        return (
+            self.__getnewargs_ex__() == other.__getnewargs_ex__()
+            if isinstance(other, ProtoReaction)
+            else NotImplemented
+        )
 
     def serialize(self) -> tuple[str, dict[str, Any]]:
-        return self.ser_identifier, {k[1:] if k.startswith('_') else k: v 
-                                     for k, v in self.__dict__.items()}
+        return self.ser_identifier, {k[1:] if k.startswith("_") else k: v for k, v in self.__dict__.items()}
 
     @classmethod
     def deserialize(cls: Type[Self], d: dict[str, Any], **_) -> Self:
-        d1 = dict(parent=Isotope.from_int_with_fallback(int(d["parent"])),
-                  branching=({Isotope.from_int_with_fallback(int(i)): v 
-                              for i, v in d["branching"].items()}
-                             if d["branching"] else None)
-                  )
+        d1 = dict(
+            parent=Isotope.from_int_with_fallback(int(d["parent"])),
+            branching=(
+                {Isotope.from_int_with_fallback(int(i)): v for i, v in d["branching"].items()}
+                if d["branching"]
+                else None
+            ),
+        )
         return cls(**(d | d1))
-
 
 
 # noinspection PyMissingOrEmptyDocstring
 class Reaction:
-    """An induced reaction to turn one thing into another.
-
-    """
+    """An induced reaction to turn one thing into another."""
 
     ser_identifier = "ConcreteReaction"
     _members_ = {}
@@ -318,12 +344,14 @@ class Reaction:
         return self._proto.spectra
 
     def __str__(self):
-        return f'{self._proto}{self._target}'
+        return f"{self._proto}{self._target}"
 
     def __eq__(self, other: "Reaction"):
-        return ((self._proto, self._target) == (other._proto, other._target)
-                if isinstance(other, Reaction)
-                else NotImplemented)
+        return (
+            (self._proto, self._target) == (other._proto, other._target)
+            if isinstance(other, Reaction)
+            else NotImplemented
+        )
 
     def __hash__(self):
         return hash((self._proto, self._target))
@@ -333,12 +361,18 @@ class Reaction:
         return self._proto.branching
 
     @classmethod
-    def from_reaction(cls, parent: ZAID, reaction: "ReactionCategory",
-                      target: ZAID = None, *,
-                      spectra: Sequence[Spectrum] = (),
-                      branching: dict[ZAID, float] = None,
-                      nu: float = 0.,
-                      energy: eV = 0., energy_err: eV = 0.) -> "Reaction":
+    def from_reaction(
+        cls,
+        parent: ZAID,
+        reaction: ReactionCategory,
+        target: ZAID = None,
+        *,
+        spectra: Sequence[Spectrum] = (),
+        branching: dict[ZAID, float] = None,
+        nu: float = 0.0,
+        energy: eV = 0.0,
+        energy_err: eV = 0.0,
+    ) -> "Reaction":
         """Make a reaction from a reaction category.
 
         Parameters
@@ -355,40 +389,32 @@ class Reaction:
         energy_err - Error in energy release of this specific reaction
 
         """
-        proto = ProtoReaction.from_reaction(parent, reaction,
-                                            spectra=spectra,
-                                            energy=energy,
-                                            nu=nu,
-                                            branching=branching or {},
-                                            energy_err=energy_err)
+        proto = ProtoReaction.from_reaction(
+            parent, reaction, spectra=spectra, energy=energy, nu=nu, branching=branching or {}, energy_err=energy_err
+        )
         target = target if target is not None else reaction.calc_target(parent)
         return cls(proto, target)
 
     def branches(self) -> Generator[tuple["Reaction", float], None, None]:
-        yield self, 1.
+        yield self, 1.0
 
     def __repr__(self):
         return str(self)
 
     def serialize(self) -> tuple[str, dict[str, Any]]:
-        return self.ser_identifier, {"proto": self._proto.serialize(), 
-                                     "target": self.target}
+        return self.ser_identifier, {"proto": self._proto.serialize(), "target": self.target}
 
     @classmethod
-    def deserialize(cls: Type[Self], d: dict[str, Any], *, 
-                    supported: dict[str, Type[Serializable]]) -> Self:
-        return cls(proto=deserialize_default(d["proto"], 
-                                             supported=supported, 
-                                             default=ProtoReaction),
-                   target=Isotope.from_int_with_fallback(d["target"]))
+    def deserialize(cls: Type[Self], d: dict[str, Any], *, supported: dict[str, Type[Serializable]]) -> Self:
+        return cls(
+            proto=deserialize_default(d["proto"], supported=supported, default=ProtoReaction),
+            target=Isotope.from_int_with_fallback(d["target"]),
+        )
 
 
 # noinspection PyMissingOrEmptyDocstring
 class ProductionReaction:
-    """Specific production of some nuclide from a parent isotope
-
-
-    """
+    """Specific production of some nuclide from a parent isotope"""
 
     ser_identifier = "ProductionReaction"
     _members_ = {}
@@ -410,9 +436,7 @@ class ProductionReaction:
         self._typus = typus
 
     @classmethod
-    def from_reaction(cls, parent: ZAID,
-                      reaction: ProductionReactionCategory
-                      ) -> "ProductionReaction":
+    def from_reaction(cls, parent: ZAID, reaction: ProductionReactionCategory) -> "ProductionReaction":
         """Creates a ProductionReaction from a category for a specific parent.
 
         Parameters
@@ -442,7 +466,7 @@ class ProductionReaction:
         For production reactions this is just 0.
 
         """
-        return 0.
+        return 0.0
 
     @property
     def energy(self) -> eV:
@@ -450,11 +474,11 @@ class ProductionReaction:
 
         For production reactions this is always 0.
         """
-        return 0.
+        return 0.0
 
     @property
     def energy_err(self) -> eV:
-        return 0.
+        return 0.0
 
     @property
     def branching(self) -> dict[ZAID, float]:
@@ -464,31 +488,25 @@ class ProductionReaction:
         return hash((self._parent, self._target, self._typus))
 
     def branches(self) -> Generator[tuple["ProductionReaction", float], None, None]:
-        yield self, 1.
+        yield self, 1.0
 
     def __str__(self):
         return self.typus
 
     def __eq__(self, other: "ProductionReaction") -> bool:
-        return ((self.parent == other.parent
-                 and self.target == other.target
-                 and self.typus == other.typus)
-                if isinstance(other, type(self))
-                else NotImplemented
-                )
-
-    def __hash__(self):
-        return hash((self.parent, self.target, self.typus))
+        return (
+            (self.parent == other.parent and self.target == other.target and self.typus == other.typus)
+            if isinstance(other, type(self))
+            else NotImplemented
+        )
 
     def serialize(self) -> tuple[str, dict[str, Any]]:
-        return self.ser_identifier, dict(parent=self.parent, 
-                                         target=self.target, 
-                                         typus=self.typus)
+        return self.ser_identifier, dict(parent=self.parent, target=self.target, typus=self.typus)
 
     @classmethod
     def deserialize(cls: Type[Self], d: dict[str, Any], **_) -> Self:
-        return cls(parent=Isotope.from_int_with_fallback(d["parent"]),
-                   target=Isotope.from_int_with_fallback(d["target"]),
-                   typus=d["typus"]
-                   )
-
+        return cls(
+            parent=Isotope.from_int_with_fallback(d["parent"]),
+            target=Isotope.from_int_with_fallback(d["target"]),
+            typus=d["typus"],
+        )

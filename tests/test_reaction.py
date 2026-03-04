@@ -1,5 +1,6 @@
 from isotopes import ZAID
-from reactions import Reaction, NGamma
+
+from reactions import NGamma, Reaction
 
 sink = ZAID(0, 0, 0)
 
