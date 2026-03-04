@@ -27,6 +27,8 @@ classifiers = [
 dependencies = [
     "multipledispatch",
     "numpy",
+    "ramp-isotopes",
+    "ramp-core",
 ]
 
 [project.optional-dependencies]
