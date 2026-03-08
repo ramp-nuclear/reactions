@@ -88,6 +88,10 @@ class ConcreteReaction(ReactionType, Protocol):
         raise NotImplementedError
 
 
+def _floatify(v) -> float:
+    return v if type(v) is float else v.item()
+
+
 # noinspection PyMissingOrEmptyDocstring
 class ProtoReaction:
     """An induced reaction that can be non-target-specific.
@@ -278,7 +282,13 @@ class ProtoReaction:
         )
 
     def serialize(self) -> tuple[str, dict[str, Any]]:
-        return self.ser_identifier, {k[1:] if k.startswith("_") else k: v for k, v in self.__dict__.items()}
+        parent = int(self.parent)
+        branching = {int(k): _floatify(v) for k, v in self.branching.items()} if self.branching else {}
+        d = {"parent": parent, "branching": branching}
+        return (
+            self.ser_identifier,
+            {k[1:] if k.startswith("_") else k: v for k, v in self.__dict__.items() if k not in d} | d,
+        )
 
     @classmethod
     def deserialize(cls: Type[Self], d: dict[str, Any], **_) -> Self:
